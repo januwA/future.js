@@ -41,10 +41,14 @@ describe("future test", () => {
   });
 
   it("wait", done => {
-    var a = Future.value(1);
-    var b = Future.value("2");
-    Future.wait<any>([a, b]).then(r => {
-      expect(r).toEqual([1, "2"]);
+    let a = new Future(res => {
+      setTimeout(() => {
+        res(1);
+      }, 500);
+    });
+    let b = Future.value("2");
+    Future.wait<any>([b, a]).then(r => {
+      expect(r).toEqual(["2", 1]);
       done();
     });
   });

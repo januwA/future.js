@@ -47,12 +47,12 @@ export class Future<T> implements FutureBase<T> {
     let status = 0;
     const result: any[] = [];
     return new Future<T[]>(res => {
-      futures.forEach(f => {
+      futures.forEach((f, index) => {
         status++;
         f.then(d => {
-          result.push(d);
           status--;
-          if (status === 0) {
+          result[index] = d;
+          if (status === 0 && result.length === futures.length) {
             res(result);
           }
         });
@@ -99,7 +99,6 @@ export class Future<T> implements FutureBase<T> {
   private _errorListener?: ICatch;
 
   private _res: IRes<T> = (value: T) => {
-
     // 如果是Future，那么就订阅
     if (value instanceof Future) {
       value.then(this._res);
